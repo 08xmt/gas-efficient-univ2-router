@@ -11,7 +11,7 @@ import './UniswapV2Library.sol';
 // library containing some math for dealing with the liquidity shares of a pair, e.g. computing their exact value
 // in terms of the underlying tokens
 library UniswapV2LiquidityMathLibrary {
-    using SafeMath for uint256;
+    using SafeMathUniswap for uint256;
 
     // computes the direction and magnitude of the profit-maximizing trade
     function computeProfitMaximizingTrade(
