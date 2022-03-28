@@ -1,4 +1,10 @@
 # gas-efficient-univ2-router
+## Foundry Gas Report
+We see a: 
+- 5.4% Gas reduction for adding liquidity
+- 0.7% Gas reduction for removing liquidity
+- 8.6% Gas reduction for swapping exact tokens
+- 3.7% Gas reduction for swapping for exact tokens
 <pre>╭─────────────────────────────┬─────────────────┬────────┬────────┬────────┬─────────╮
 │<font color="#8AE234"><b> GasEfficientRouter contract </b></font>┆                 ┆        ┆        ┆        ┆         │
 ╞═════════════════════════════╪═════════════════╪════════╪════════╪════════╪═════════╡
