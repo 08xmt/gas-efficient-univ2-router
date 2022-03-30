@@ -23,8 +23,10 @@ contract BasicRouterTest is DSTest {
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
     TestToken token1;
     TestToken token2;
+    TestToken token3;
     UniswapV2Factory pairFactory;
     address pair;
+    address pair2;
     address sender = msg.sender;
     UniswapV2Router02 router;
         
@@ -34,10 +36,14 @@ contract BasicRouterTest is DSTest {
         router = new UniswapV2Router02(address(pairFactory), address(0));//Setting weth address to 0 addr for now
         token1 = new TestToken(sender);
         token2 = new TestToken(sender);
+        token3 = new TestToken(sender);
         token1.approve(address(router), 100 ether);
         token2.approve(address(router), 100 ether);
+        token3.approve(address(router), 100 ether);
         router.addLiquidity(address(token1),address(token2),1 ether, 5 ether, 0, 0, msg.sender, block.number+100);
+        router.addLiquidity(address(token2),address(token3),10 ether, 10 ether, 0, 0, msg.sender, block.number+100);
         pair = pairFactory.getPair(address(token1), address(token2));
+        pair2 = pairFactory.getPair(address(token2), address(token3));
     }
 
     function testAddLiquidity() public {
@@ -58,10 +64,26 @@ contract BasicRouterTest is DSTest {
         router.swapExactTokensForTokens(1 ether, 0, path, msg.sender, block.number);
     }
 
+    function testSwapExactForDoubleHop() public {
+        address[] memory path = new address[](3);
+        path[0] = address(token1);
+        path[1] = address(token2);
+        path[2] = address(token3);
+        router.swapExactTokensForTokens(1 ether, 0, path, msg.sender, block.number);
+    }
+
     function testSwapForExact() public {
         address[] memory path = new address[](2);
         path[0] = address(token1);
         path[1] = address(token2);
+        router.swapTokensForExactTokens(1 ether / 2, 2 ether, path, msg.sender, block.number);
+    }
+
+    function testSwapForExactDoubleHop() public {
+        address[] memory path = new address[](3);
+        path[0] = address(token1);
+        path[1] = address(token2);
+        path[2] = address(token3);
         router.swapTokensForExactTokens(1 ether / 2, 2 ether, path, msg.sender, block.number);
     }
 }

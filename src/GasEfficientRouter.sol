@@ -130,8 +130,9 @@ contract GasEfficientRouter {
             if(path[i].token0In){
                 //uint amountOut = amounts[i + 1];
                 (uint reserve0, uint reserve1,) = pair.getReserves();
+                //Parameters for getAmountOut is amountIn, reserve0, reserve1
+                //When doing multiple Hops, amountOut becomes amountIn in next hop
                 amountOut = getAmountOut(amountOut, reserve0, reserve1);
-                //amountOut becomes amountIn in next loop
                 address to = i < path.length - 1 ? path[i + 1].pair : _to;
                 //IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output)).swap(amount0Out, amount1Out, to, new bytes(0));
                 pair.swap(0, amountOut, to, new bytes(0));
@@ -211,11 +212,11 @@ contract GasEfficientRouter {
     */
 
     function getAmountsIn(uint amountOut, HopStruct.Hop[] memory path) public view returns (uint) {
-        uint amountIn;
+        uint amountIn = amountOut;
         for (uint i = path.length; i > 0; i--) {
             IUniswapV2Pair pair = IUniswapV2Pair(path[i-1].pair);
             (uint reserve0, uint reserve1,) = pair.getReserves();
-            amountIn = path[i-1].token0In ? getAmountIn(amountOut, reserve0, reserve1) : getAmountIn(amountOut, reserve1, reserve0);
+            amountIn = path[i-1].token0In ? getAmountIn(amountIn, reserve0, reserve1) : getAmountIn(amountIn, reserve1, reserve0);
         }
         return amountIn;
     }
